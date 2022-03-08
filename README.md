@@ -19,15 +19,21 @@ The user inputs an utterance and the corresponding intent will be displayed.
        * RapidFuzz library imported from github and added as subdirectory in cmakeFile
 
 ## Algorithm
+
 -	Levenstein Distance algorithm: The Levenshtein distance is a string metric for measuring difference between two sequences. Informally, the Levenshtein distance between two words is the minimum number of single-character edits (i.e. insertions, deletions or substitutions) required to change one word into the other.
 -	RapidFuzzy library can also be using to measure the difference between strings.
 
 ## Performance :
+
 *	I have created a function " performanceMesure(string mesure)" in the intentRecognition class that measure the confidence of the intent recognition; it stocks into a file "performance.txt" the measurement ( 0 to 1), 
 1 refers to an exact intent recognition, 0 refers to the lowest intent recognition.
 *	The performance can be improved by adding an additional layer based on the Fuzzy algorithm and can be combined with the Levenstein Distance to improve the score of intent matching.
 *	When strings have the same distance or ratio we can use another semantic algorithm to have more precise results.
 
+## Tests 
+
+* The 3 uses cases : What is the weather like today?, What is the weather like in Paris today?, Tell me an interesting fact are executed correctly.
+* In the test.cpp file, you can find all the uses cases that I have tested, you can add your own tests and execute it with /build/tests/test.exe.
 
 ## Usage 
 
