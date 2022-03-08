@@ -1,0 +1,94 @@
+name: CMake
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: install Catch2
+      run: |
+          git clone https://github.com/catchorg/Catch2.git
+          cd Catch2
+          git checkout v3.0.0-preview3
+          cmake -Bbuild -H. -DBUILD_TESTING=OFF
+          sudo cmake --build build/ --target install
+
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}  -DRAPIDFUZZ_BUILD_TESTING=1 -DRAPIDFUZZ_BUILD_FUZZERS=1 -DCMAKE_CXX_COMPILER=clang++
+
+    - name: Build
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+    - name: Test
+      working-directory: build
+      run: ctest -C ${{env.BUILD_TYPE}} --rerun-failed --output-on-failure
+
+    - name: Fuzz Test
+      working-directory: build
+      run: |
+          fuzzing/fuzz_levenshtein_distance -max_total_time=30
+          fuzzing/fuzz_levenshtein_editops -max_total_time=30
+          fuzzing/fuzz_indel_distance -max_total_time=30
+          fuzzing/fuzz_indel_editops -max_total_time=30
+
+  build_cmake_installed:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Install RapidFuzz
+      run: sudo cmake --build build --target install
+
+    - name: Configure example project
+      working-directory: examples/cmake_installed
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build example project
+      working-directory: examples/cmake_installed
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+    - name: Run example project
+      working-directory: examples/cmake_installed/build
+      run: ./foo
+
+  build_cpack_installed:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Install RapidFuzz
+      working-directory: build
+      run: |
+          cpack -G DEB
+          sudo dpkg -i *.deb
+
+    - name: Configure example project
+      working-directory: examples/cmake_installed
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build example project
+      working-directory: examples/cmake_installed
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+    - name: Run example project
+      working-directory: examples/cmake_installed/build
+      run: ./foo

@@ -19,8 +19,10 @@ TEST_CASE("******* TEST DIFFERENT USES CASES ********", "[classic]")
 		REQUIRE(intent.getIntent("How is the weather today?") == " Intent : Get Weather");
 		REQUIRE(intent.getIntent("How is the weather in Paris today?") == " Intent : Get Weather City");
 		REQUIRE(intent.getIntent("Tell me something interesting.") == " Intent : Get Fact");
-		REQUIRE(intent.getIntent("How is the weather in Paris today?") == " Intent : Get Weather City");
+		REQUIRE(intent.getIntent("How is the wether ?") == " Intent : Get Weather");
+		REQUIRE(intent.getIntent("What is the weather like in London today?") == " Intent : Get Weather City");
 		REQUIRE(intent.getIntent("I want to know an interesting fact.") == " Intent : Get Fact");
-		REQUIRE(intent.getIntent("Let's talk about an interesting fact.") == " Intent : Get Fact");
+		
+		
 	
 }

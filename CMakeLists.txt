@@ -28,7 +28,7 @@ FetchContent_Declare(json
 
 add_subdirectory(tests)
 
-
+add_subdirectory(include/3rdparty/RapidFuzz)
 
 # Add all the source files needed to build the executable
 add_executable(
@@ -40,5 +40,6 @@ add_executable(
 
 target_link_libraries(IntentRecognition 
 PRIVATE nlohmann_json::nlohmann_json
+rapidfuzz::rapidfuzz
 )
 
